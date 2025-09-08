@@ -1,0 +1,138 @@
+{
+  "name": "coracao-livre",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  }
+}
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import Match from './pages/Match';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/match" element={<Match />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function Home() {
+  return (
+    <div>
+      <h1>Coração Livre 💘</h1>
+      <p>Descubra pessoas incríveis perto de si.</p>
+      <Link to="/login">Entrar</Link>
+    </div>
+  );
+}
+
+export default Home;
+import React, { useState } from 'react';
+
+function Login() {
+  const [email, setEmail] = useState('');
+
+  const handleLogin = async () => {
+    const res = await fetch('https://teu-backend-url.com/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    alert(`Bem-vindo, ${data.user}`);
+  };
+
+  return (
+    <div>
+      <h2>Login</h2>
+      <input
+        type="email"
+        placeholder="Seu email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <button onClick={handleLogin}>Entrar</button>
+    </div>
+  );
+}
+
+export default Login;
+import React from 'react';
+
+function Profile() {
+  return (
+    <div>
+      <h2>Seu Perfil</h2>
+      <p>Nome: João</p>
+      <p>Localização: Grenoble</p>
+      <p>Preferência: Mulheres</p>
+    </div>
+  );
+}
+
+export default Profile;
+import React, { useEffect, useState } from 'react';
+
+function Match() {
+  const [match, setMatch] = useState(null);
+
+  useEffect(() => {
+    fetch('https://teu-backend-url.com/match')
+      .then((res) => res.json())
+      .then((data) => setMatch(data));
+  }, []);
+
+  return (
+    <div>
+      <h2>Match Encontrado</h2>
+      {match ? (
+        <p>Você combinou com {match.match} — Compatibilidade: {match.compatibility}</p>
+      ) : (
+        <p>Procurando match...</p>
+      )}
+    </div>
+  );
+}
+
+export default Match;
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/match")
+def get_match():
+    return {"match": "Joana", "compatibility": "92%"}
+
+@app.post("/login")
+def login(user: dict):
+    return {"status": "success", "user": user["email"]}
+fastapi
+uvicorn
